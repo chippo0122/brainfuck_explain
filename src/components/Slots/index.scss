@@ -3,6 +3,7 @@
 }
 
 .pointer {
+    transition: 0.3s;
     top: calc(100% + 10px);
     left: 0;
 }

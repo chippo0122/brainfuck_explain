@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import './index.scss'
 
 export default function Slots(props) {
-    const slots = props.slots;
+    //props
+    const {slots, currentIndex} = props;
+    //state
     const [slotWidth, setSlotWidth] = useState(0);
     //ref
     const slotsContainer = useRef();
@@ -34,7 +36,7 @@ export default function Slots(props) {
                     )
                 })
             }
-            <div style={{width: `${slotWidth}px`}} className="pointer display-3 text-light text-center position-absolute">↑</div>
+            <div style={{width: `${slotWidth}px`, transform: `translateX(${slotWidth * currentIndex}px)`}} className="pointer display-3 text-light text-center position-absolute">↑</div>
         </div>
     )
 }
