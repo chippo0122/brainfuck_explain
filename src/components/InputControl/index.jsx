@@ -1,25 +1,25 @@
-import {useState} from 'react'
+import { useState } from 'react'
 import './index.scss'
 
 export default function InputArea(props) {
     //props
-    const {setSlots, setIndex, currentIndex, slots} = props;
-    
-    const [loopStartAt, setLoopStartAt] = useState([]);
-    //const [loopContainer, setLoopContainer] = useState([]);
+    const { setSlots, setIndex, currentIndex, slots } = props;
+
+    const [loopIsOn, setLoopIsOn] = useState(false);
+    const [tempCode, setTempCode] = useState('');
     const [rawCode, setRawCode] = useState('+++');
+    const [output, setOutput] = useState('');
 
     const compileChar = (str) => {
-        console.log(str);
         switch (str) {
             case '+':
                 const plusSlots = [...slots];
-                plusSlots[currentIndex] ++;
+                plusSlots[currentIndex]++;
                 setSlots(plusSlots);
                 break;
             case '-':
                 const minusSlots = [...slots];
-                minusSlots[currentIndex] --;
+                minusSlots[currentIndex]--;
                 setSlots(minusSlots);
                 break;
             case '>':
@@ -31,39 +31,67 @@ export default function InputArea(props) {
                 setIndex(backword);
                 break;
             case '[':
-                const addStarts = [...loopStartAt.push(currentIndex)];
-                setLoopStartAt(addStarts);
+                setLoopIsOn(true);
+                setTempCode('[');
                 break;
             case ']':
-                const pop = loopStartAt.pop();
-                const popStarts = [...loopStartAt];
-                setLoopStartAt(popStarts);
-                setIndex(pop);
+                setLoopIsOn(false);
+
+                if (slots[currentIndex] > 0) {
+                    setRawCode(`${tempCode}${rawCode}`);
+                } else {
+                    setTempCode('');
+                }
+
+                break;
+            case '.':
+                const newChar = output + String.fromCharCode(slots[currentIndex]);
+                setOutput(newChar);
                 break;
             // case ',':
-            // case '.':
-            // case '\n':
-            // case ' ':
+            default:
+                break;
         }
     }
 
     const popCode = () => {
-        if(rawCode.length > 0) {
+        if (rawCode.length > 0) {
             const current = rawCode.charAt(0);
             const newCode = rawCode.slice(1);
             setRawCode(newCode);
             compileChar(current);
+
+            if (loopIsOn) {
+                const newTemp = tempCode + current;
+                setTempCode(newTemp);
+            }
         }
+    }
+
+    const clearAll = () => {
+        setLoopIsOn(false);
+        setTempCode('');
+        setRawCode('');
+        setOutput('');
+        //props
+        setIndex(0);
+        setSlots(new Array(10).fill(0));
     }
 
     return (
         <div className='input-area'>
+            <span className="output text-warning fs-5 mb-3">
+                OUTPUT : {
+                    output
+                }
+                <span className='bg-warning cursor'></span>
+            </span>
             <div className="form-floating">
-                <textarea onChange={(e) => {setRawCode(e.target.value)}} value={rawCode} className="form-control code-input" id="codeInput"></textarea>
+                <textarea onChange={(e) => { setRawCode(e.target.value) }} value={rawCode} className="form-control code-input" id="codeInput"></textarea>
                 <label className='text-light' htmlFor="codeInput">Code Here</label>
             </div>
             <button onClick={popCode} className="btn btn-primary my-3">Execute Step by Step</button>
-            {/* <button className="btn btn-outline-warning my-3 ms-3">Execute Automatically</button> */}
+            <button onClick={clearAll} className="btn btn-outline-warning ms-3 my-3">CLEAR</button>
         </div>
     )
 }

@@ -6,5 +6,30 @@
     background-color: transparent !important;
     height: 250px !important;
     color: #fff !important;
-    font-size: 18px;
+    font-size: 20px;
+}
+
+.output {
+    position: relative;
+    display: inline-block;
+}
+
+.cursor {
+    animation: cursor-breath 1s ease-in-out infinite;
+    display: inline-block;
+    position: absolute;
+    left: calc(100% + 10px);
+    top: 0;
+    bottom: 0;
+    width: 10px;
+}
+
+@keyframes cursor-breath {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
