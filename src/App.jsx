@@ -7,7 +7,6 @@ function App() {
 
   const [slots, setSlots] = useState(new Array(10).fill(0));
   const [currentIndex, setIndex] = useState(0);
-  const [currentStep, setStep] = useState(0);
 
   return (
     <div className="App p-5 bg-dark">

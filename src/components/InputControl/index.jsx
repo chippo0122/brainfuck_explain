@@ -5,10 +5,15 @@ export default function InputArea(props) {
   //props
   const { setSlots, setIndex, currentIndex, slots } = props;
 
-  const [loopIsOn, setLoopIsOn] = useState(false);
-  const [tempCode, setTempCode] = useState('');
-  const [rawCode, setRawCode] = useState('+++');
+  // const [loopIsOn, setLoopIsOn] = useState(false);
+  // const [tempCode, setTempCode] = useState('');
+  const [execCode, setExecCode] = useState('+++');
+  const [rawCode, setRawCode] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
   const [output, setOutput] = useState('');
+
+  //control
+  const [isPanelLock, setPanelLock] = useState(false);
 
   const compileChar = (str) => {
     switch (str) {
@@ -31,17 +36,17 @@ export default function InputArea(props) {
         setIndex(backword);
         break;
       case '[':
-        setLoopIsOn(true);
-        setTempCode('[');
+        // setLoopIsOn(true);
+        // setTempCode('[');
         break;
       case ']':
-        setLoopIsOn(false);
+        // setLoopIsOn(false);
 
-        if (slots[currentIndex] > 0) {
-          setRawCode(`${tempCode}${rawCode}`);
-        } else {
-          setTempCode('');
-        }
+        // if (slots[currentIndex] > 0) {
+        //   setRawCode(`${tempCode}${rawCode}`);
+        // } else {
+        //   setTempCode('');
+        // }
 
         break;
       case '.':
@@ -55,27 +60,33 @@ export default function InputArea(props) {
   }
 
   const popCode = () => {
-    if (rawCode.length > 0) {
-      const current = rawCode.charAt(0);
-      const newCode = rawCode.slice(1);
-      setRawCode(newCode);
+    if (execCode.length > 0 && isPanelLock) {
+      const current = execCode.charAt(0);
+      const newCode = execCode.slice(1);
+      setExecCode(newCode);
       compileChar(current);
 
-      if (loopIsOn) {
-        const newTemp = tempCode + current;
-        setTempCode(newTemp);
-      }
+      // if (loopIsOn) {
+      //   const newTemp = tempCode + current;
+      //   setTempCode(newTemp);
+      // }
     }
   }
 
   const clearAll = () => {
-    setLoopIsOn(false);
-    setTempCode('');
+    // setLoopIsOn(false);
+    // setTempCode('');
+    setExecCode('');
     setRawCode('');
     setOutput('');
     //props
     setIndex(0);
     setSlots(new Array(10).fill(0));
+  }
+
+  const lockInsertion = () => {
+    setPanelLock(!isPanelLock);
+    setRawCode(execCode);
   }
 
   return (
@@ -86,11 +97,24 @@ export default function InputArea(props) {
         }
         <span className='bg-warning cursor'></span>
       </span>
-      <div className="form-floating">
-        <textarea onChange={(e) => { setRawCode(e.target.value) }} value={rawCode} className="form-control code-input" id="codeInput"></textarea>
-        <label className='text-light' htmlFor="codeInput">Code Here</label>
+      <div className="d-flex">
+        <div className="form-floating w-50">
+          <textarea onChange={(e) => { setExecCode(e.target.value) }} value={execCode} disabled={isPanelLock} className="form-control code-input" id="codeInput"></textarea>
+          <label className='text-light' htmlFor="codeInput">Code Here</label>
+        </div>
+        <div className="border border-warning rounded ms-3 py-2 px-3 w-50">
+          <label className='text-light' htmlFor="codeInput">The code Executing</label>
+          <div className='text-warning'>
+            {rawCode}
+          </div>
+        </div>
       </div>
       <button onClick={popCode} className="btn btn-primary my-3">Execute Step by Step</button>
+      <button onClick={lockInsertion} className="btn btn-outline-warning ms-3 my-3">
+        {
+          isPanelLock ? 'UNLOCK CODE' : 'LOCK CODE'
+        }
+      </button>
       <button onClick={clearAll} className="btn btn-outline-warning ms-3 my-3">CLEAR</button>
     </div>
   )
