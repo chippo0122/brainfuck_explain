@@ -6,7 +6,7 @@ import './App.scss'
 function App() {
 
   const [slots, setSlots] = useState(new Array(10).fill(0));
-  const [currentIndex, setIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   return (
     <div className="App p-5 bg-dark">
@@ -19,7 +19,7 @@ function App() {
       ></Slots>
       <InputControl
         setSlots={setSlots}
-        setIndex={setIndex}
+        setCurrentIndex={setCurrentIndex}
         slots={slots}
         currentIndex={currentIndex}
       ></InputControl>
