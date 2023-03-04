@@ -7,19 +7,20 @@ function App() {
 
   const [slots, setSlots] = useState(new Array(10).fill(0));
   const [currentIndex, setIndex] = useState(0);
+  const [currentStep, setStep] = useState(0);
 
   return (
     <div className="App p-5 bg-dark">
       <h1 className='text-light text-center display-3'>
         Brainf*ck Explainer
       </h1>
-      <Slots 
-        slots={slots} 
+      <Slots
+        slots={slots}
         currentIndex={currentIndex}
       ></Slots>
-      <InputControl 
-        setSlots={setSlots} 
-        setIndex={setIndex} 
+      <InputControl
+        setSlots={setSlots}
+        setIndex={setIndex}
         slots={slots}
         currentIndex={currentIndex}
       ></InputControl>
