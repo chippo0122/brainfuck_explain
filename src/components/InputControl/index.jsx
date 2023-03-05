@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './index.scss'
 
 export default function InputArea(props) {
@@ -12,6 +12,9 @@ export default function InputArea(props) {
   const [output, setOutput] = useState('');
   //control
   const [isPanelLock, setPanelLock] = useState(false);
+  const [tick, setTick] = useState(false);
+
+  const timer = useRef(null);
 
   const compileChar = (str) => {
     switch (str) {
@@ -76,6 +79,22 @@ export default function InputArea(props) {
     }
   }
 
+  const openTimer = () => {
+    setTick(!tick);
+  }
+
+  const autoPopCode = () => {
+    timer.current = setInterval(() => {
+      if (execCode.length > 0 && isPanelLock) {
+        document.getElementById('EXEC').click();
+      } else {
+        clearInterval(timer.current);
+        timer.current = null;
+        setTick(false);
+      }
+    }, 100);
+  }
+
   const clearAll = () => {
     //data
     setExecCode('');
@@ -88,12 +107,23 @@ export default function InputArea(props) {
     setSlots(new Array(10).fill(0));
     //control
     setPanelLock(false);
+    setTick(false);
   }
 
   const lockInsertion = () => {
     setPanelLock(!isPanelLock);
     setRawCode(execCode);
   }
+
+  useEffect(() => {
+    if (tick) {
+      autoPopCode();
+    } else {
+      clearInterval(timer.current);
+      timer.current = null;
+      setTick(false);
+    }
+  }, [tick]);
 
   return (
     <div className='input-area'>
@@ -113,14 +143,34 @@ export default function InputArea(props) {
           <div className='text-warning'>
             {
               rawCode.split('').map((el, index) => {
-                return index === currentStep ? <span key={index} className='text-success'>{el}</span> : el
+                return index === currentStep ?
+                  <span
+                    key={index}
+                    style={{
+                      color: '#55efc4',
+                      fontSize: '24px',
+                      fontWeight: 500,
+                      verticalAlign: 'baseline',
+                      textShadow: '0 0 20px #eee'
+                    }}
+                  >
+                    {
+                      el
+                    }
+                  </span> :
+                  el
               })
             }
           </div>
         </div>
       </div>
-      <button onClick={popCode} className="btn btn-primary my-3">Execute Step by Step</button>
-      <button onClick={lockInsertion} className="btn btn-outline-warning ms-3 my-3">
+      <button onClick={openTimer} className="btn btn-success my-3">
+        {
+          tick ? 'Pause' : 'Execute Automatically'
+        }
+      </button>
+      <button id="EXEC" onClick={popCode} className="btn btn-primary my-3 ms-3">Execute Step by Step</button>
+      <button onClick={lockInsertion} className="btn btn-danger ms-3 my-3">
         {
           isPanelLock ? 'UNLOCK CODE' : 'LOCK CODE'
         }
